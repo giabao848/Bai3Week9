@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven Multi-OS
 
 on:
   push:
@@ -10,22 +10,27 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest,window-latest, macos-latest]
-    runs-on: ${{ matrix.os}}
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
     steps:
       - name: Checkout code
-        uses:  actions/checkout@v4
+        uses: actions/checkout@v4
+
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
       - name: Build with Maven
         run: mvn -B package
-      - name: Upload Build Artifact
-        if: success()
+
+      - name: Upload Artifact
+        if: matrix.os == 'ubuntu-latest' && success()
         uses: actions/upload-artifact@v4
         with:
-          name: Bai3-Artifact-JAR
-          path:target/*.jar
+          name: Bai3-Artifact-Ubuntu
+          path: target/*.jar
